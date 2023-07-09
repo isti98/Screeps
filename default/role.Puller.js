@@ -1,5 +1,6 @@
-var roleGatherer = {
+var rolePuller = {
 
+    
     /** @param {Creep} creep **/
     run: function(creep) {
 	    if(creep.store.getFreeCapacity() > 0) {
@@ -26,4 +27,4 @@ var roleGatherer = {
 	}
 };
 
-module.exports = roleGatherer;
+module.exports = rolePuller;
