@@ -1,44 +1,40 @@
+//Includes 
+var roleHarvester = require('role.Gatherer');
+var roleUpgrader = require('role.Builder');
+var roleBuilder = require('role.Miner');
 
-let stack = require("stack");
-let binarytree = require("binarytree");
-let queue = require("queue");
-let singlylinkedlist = require("singlylinkedlist");
-let doublelinkedlist = require("doublelinkedlist");
-let set = require("set");
+//Setting up variables in the memory
 
-let act = require('act');
-let action = require("action");
-let condition = require("condition");
-let task = require("task");
 
-//main 2.0
+//Main loop
 
 module.exports.loop = function () {
-    
-    var s= new stack.Stack();
-    var a = new action.Action(1,2,3,4);
-    var t = new task.Task();   // new Mining("5bbcaf7e9099fc012e63aaae"));
 
-/*    
-    let tasks = [];
-    for( var t in tasks)
-    {
-        for(var i = 0; i < t.creeps.length(); i++)
-        {
-            var actionPerformed = false;
-            var actionCurrent = t.actioncycle[t.actionCounter[i]]
-            while(!actionPerformed && actionCurrent.startCondition)
-            {
-                if(!actionCurrent.endCondition)
-                {
-                    actionCurrent.act(target,t.creeps[i]);
-                    actionPerformed = true;
-                }else{
-                        t.actionCounter[i]=(t.actionCounter[i]+1) % actioncycle.length();
-                        actionCurrent=t.actioncycle[t.actionCounter[i]] 
-                }
-            }
+    var tower = Game.getObjectById('e60316bfcc3a253f9cb92688');
+    if(tower) {
+        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (structure) => structure.hits < structure.hitsMax
+        });
+        if(closestDamagedStructure) {
+            tower.repair(closestDamagedStructure);
+        }
+
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
         }
     }
-*/
+
+    for(var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        if(creep.memory.role == 'harvester') {
+            roleHarvester.run(creep);
+        }
+        if(creep.memory.role == 'upgrader') {
+            roleUpgrader.run(creep);
+        }
+        if(creep.memory.role == 'builder') {
+            roleBuilder.run(creep);
+        }
+    }
 }
