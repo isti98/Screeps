@@ -10,6 +10,21 @@ var roleMiner = require('role.Miner');
 
 //Main loop
 module.exports.loop = function () {
+    Game.spawns['Spawn1'].memory.numberOfGatherers=0;
+    Game.spawns['Spawn1'].memory.numberOfBuilders=1;
+    Game.spawns['Spawn1'].memory.numberOfUpgraders=1;
+    Game.spawns['Spawn1'].memory.numberOfMiners=2;
+    Game.spawns['Spawn1'].memory.numberOfCarries=5;
+    Game.spawns['Spawn1'].memory.mines=['5bbca9fe9099fc012e6308a0','5bbca9fe9099fc012e6308a1'];
+    Game.spawns['Spawn1'].memory.ticksLeft=[0,0];
+    Game.spawns['Spawn1'].memory.myRooms=['W56N17'];
+
+    for(var i=0; i<Game.spawns['Spawn1'].memory.mines.length;++i)
+    {
+        Game.spawns['Spawn1'].memory.ticksLeft[i]-=1;
+    }
+
+    console.log(Game.time);
 
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
@@ -18,20 +33,12 @@ module.exports.loop = function () {
         }
     }
     
-    console.log(Game.time);
-    if(Game.time%10==0){
-        Game.spawns['Spawn1'].memory.numberOfGatherers=0;
-        Game.spawns['Spawn1'].memory.numberOfBuilders=2;
-        Game.spawns['Spawn1'].memory.numberOfUpgraders=0;
-        Game.spawns['Spawn1'].memory.numberOfMiners=1;
-        Game.spawns['Spawn1'].memory.numberOfCarries=3
-        Game.spawns['Spawn1'].memory.myRooms=['W56N17'];
-        
+    if(Game.time%10==0){        
         var avaiableSource = Game.rooms['W56N17'].energyCapacityAvailable;
         console.log("AvaibleSources: "+ avaiableSource);
         var BodyMiner=[];
         var BodyCarry=[CARRY,MOVE];
-        var Body=[WORK,CARRY,MOVE];
+        var Body=[WORK,WORK,CARRY,CARRY,MOVE,MOVE];
         var numberOfBodyParts = (avaiableSource)/100;
         var i;
         for(i=0; i<numberOfBodyParts-1.5; ++i)
@@ -50,9 +57,10 @@ module.exports.loop = function () {
         console.log('Carries: ' + carries+" < "+Game.spawns["Spawn1"].memory.numberOfCarries);
         var miners = (_.filter(Game.creeps, (creep) => creep.memory.role == 'miner')).length;
         console.log('Miners: ' + miners+" < "+Game.spawns["Spawn1"].memory.numberOfMiners);
-        if(gatherers<Game.spawns['Spawn1'].memory.numberOfGatherers)
+        
+        if(carries<Game.spawns['Spawn1'].memory.numberOfCarries)
         {
-            Game.spawns["Spawn1"].spawnCreep(Body,'Gatherer'+Game.time,{memory:{role:"gatherer"}});
+            Game.spawns["Spawn1"].spawnCreep(BodyCarry,'Carry'+Game.time,{memory:{role:"carry"}});
         }
         else if(builders<Game.spawns['Spawn1'].memory.numberOfBuilders)
         {
@@ -62,13 +70,24 @@ module.exports.loop = function () {
         {
             Game.spawns["Spawn1"].spawnCreep(Body,'Upgrader'+Game.time,{memory:{role:"upgrader"}});
         }
-        else if(carries<Game.spawns['Spawn1'].memory.numberOfCarries)
+        else if(gatherers<Game.spawns['Spawn1'].memory.numberOfGatherers)
         {
-            Game.spawns["Spawn1"].spawnCreep(BodyCarry,'Carry'+Game.time,{memory:{role:"carry"}});
+            Game.spawns["Spawn1"].spawnCreep(Body,'Gatherer'+Game.time,{memory:{role:"gatherer"}});
         }
         else if(miners<Game.spawns['Spawn1'].memory.numberOfMiners)
-        {
-            Game.spawns["Spawn1"].spawnCreep(BodyMiner,'Miner'+Game.time,{memory:{role:"miner"}});
+        {   
+            var attachTo;
+            var size=Game.spawns['Spawn1'].memory.ticksLeft.length;
+            var i=0;
+            while(i<size && (Game.spawns['Spawn1'].memory.ticksLeft[i]>0)){
+                ++i;
+            }
+            if(i<size){
+                attachTo=Game.spawns['Spawn1'].memory.mines[i];
+                Game.spawns['Spawn1'].memory.ticksLeft[i]=1500;
+            }
+            console.log('sdfsdfasdfasdfa : '+attachTo);
+            Game.spawns['Spawn1'].spawnCreep(BodyMiner,'Miner'+Game.time,{memory:{role: 'miner', attachTo: attachTo}});
         }
     }
 
@@ -106,4 +125,8 @@ module.exports.loop = function () {
             roleMiner.run(creep);
         }
     }
+
+    //to work
+    Game.creeps['Miner49749860'].harvest(Game.getObjectById('5bbca9fe9099fc012e6308a0'));
+    
 }

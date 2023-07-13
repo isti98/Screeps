@@ -4,33 +4,55 @@ var roleCarry = {
     run: function(creep) {
         if (creep.carry.energy < creep.carryCapacity)
         {
-            var energy = creep.room.find(
+            var energy = creep.pos.findClosestByPath(
                 FIND_DROPPED_RESOURCES || FIND_TOMBSTONES
             );
-        console.log(energy.length);
-            if (energy.length>0) {
-                console.log(creep.pickup(energy[0]));
+            if (energy) {
+                console.log(creep.pickup(energy));
                 
-                if(creep.pickup(energy[0]==ERR_NOT_IN_RANGE)){
-                    creep.moveTo(energy[0],{visualizePathStyle: {stroke: '#ffffff'}});
+                if(creep.pickup(energy==ERR_NOT_IN_RANGE)){
+                    creep.moveTo(energy,{visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }
-        }else{
-            var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_EXTENSION ||
-                            structure.structureType == STRUCTURE_SPAWN ||
-                            structure.structureType == STRUCTURE_TOWER) && 
-                            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                }
-            });
-            if(targets.length > 0) {
-                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});    
+            else{
+                var containers = creep.pos.findClosestByPath(FIND_STRUCTURES,
+                        {filter:(structure)=>{
+                            return (structure.structureType == STRUCTURE_CONTAINER) &&
+                                    structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0 ;
+                }});
+                if(creep.withdraw(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(containers,{visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }
         }
-	}
+        else{
+            var targets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_EXTENSION ||
+                            structure.structureType == STRUCTURE_SPAWN ||
+                            structure.structureType == STRUCTURE_TOWER ) && 
+                            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                }
+            });
+            if(targets) {
+                if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targets, {visualizePathStyle: {stroke: '#ffffff'}});    
+                }
+            }else{
+                var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_CONTAINER ) && 
+                            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                    }
+                });
+                if(containers) {
+                    if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets, {visualizePathStyle: {stroke: '#ffffff'}});    
+                    }
+                }
+            }
+	    }
+    }
 };
 
 module.exports = roleCarry;
