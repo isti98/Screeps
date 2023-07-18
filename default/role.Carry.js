@@ -34,7 +34,8 @@ var roleCarry = {
                             structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                 }
             });
-            if(targets) {
+            console.log('target: '+(targets!=null));
+            if(targets != null ) {
                 if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets, {visualizePathStyle: {stroke: '#ffffff'}});    
                 }
@@ -45,9 +46,10 @@ var roleCarry = {
                             structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                     }
                 });
-                if(containers) {
-                    if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(targets, {visualizePathStyle: {stroke: '#ffffff'}});    
+                console.log('containers: '+ (containers!=null));
+                if(containers!=null) {
+                    if(creep.transfer(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(containers, {visualizePathStyle: {stroke: '#ffffff'}});    
                     }
                 }
             }

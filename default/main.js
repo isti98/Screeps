@@ -4,9 +4,9 @@ var roleUpgrader = require('role.Upgrader');
 var roleBuilder = require('role.Builder');
 var roleCarry = require('role.Carry');
 var roleMiner = require('role.Miner');
+var creepSpawning = require('creepSpawning');
 
 //Setting up variables in the memory
-
 
 //Main loop
 module.exports.loop = function () {
@@ -14,10 +14,10 @@ module.exports.loop = function () {
     Game.spawns['Spawn1'].memory.numberOfBuilders=1;
     Game.spawns['Spawn1'].memory.numberOfUpgraders=1;
     Game.spawns['Spawn1'].memory.numberOfMiners=2;
-    Game.spawns['Spawn1'].memory.numberOfCarries=5;
+    Game.spawns['Spawn1'].memory.numberOfCarries=2;
     Game.spawns['Spawn1'].memory.mines=['5bbca9fe9099fc012e6308a0','5bbca9fe9099fc012e6308a1'];
     Game.spawns['Spawn1'].memory.ticksLeft=[0,0];
-    Game.spawns['Spawn1'].memory.myRooms=['W56N17'];
+    Game.spawns['Spawn1'].memory.myRooms=['E22S19'];
 
     for(var i=0; i<Game.spawns['Spawn1'].memory.mines.length;++i)
     {
@@ -34,11 +34,11 @@ module.exports.loop = function () {
     }
     
     if(Game.time%10==0){        
-        var avaiableSource = Game.rooms['W56N17'].energyCapacityAvailable;
+        var avaiableSource = Game.rooms[Game.spawns['Spawn1'].memory.myRooms[0]].energyCapacityAvailable;
         console.log("AvaibleSources: "+ avaiableSource);
         var BodyMiner=[];
-        var BodyCarry=[CARRY,MOVE];
-        var Body=[WORK,WORK,CARRY,CARRY,MOVE,MOVE];
+        var BodyCarry=[CARRY,CARRY,MOVE,MOVE];
+        var Body=[WORK,CARRY,MOVE];
         var numberOfBodyParts = (avaiableSource)/100;
         var i;
         for(i=0; i<numberOfBodyParts-1.5; ++i)
@@ -46,6 +46,8 @@ module.exports.loop = function () {
             BodyMiner[i]=WORK;
         }
         BodyMiner[i]=MOVE;
+        Body=BodyMiner;
+        Body[0]=CARRY;
         console.log(BodyMiner);
         var gatherers = (_.filter(Game.creeps, (creep) => creep.memory.role == 'gatherer')).length;
         console.log('Gatherer: ' + gatherers+" < "+Game.spawns["Spawn1"].memory.numberOfGatherers);
@@ -62,18 +64,6 @@ module.exports.loop = function () {
         {
             Game.spawns["Spawn1"].spawnCreep(BodyCarry,'Carry'+Game.time,{memory:{role:"carry"}});
         }
-        else if(builders<Game.spawns['Spawn1'].memory.numberOfBuilders)
-        {
-            Game.spawns["Spawn1"].spawnCreep(Body,'Builder'+Game.time,{memory:{role:"builder"}});
-        }
-        else if(upgraders<Game.spawns['Spawn1'].memory.numberOfUpgraders)
-        {
-            Game.spawns["Spawn1"].spawnCreep(Body,'Upgrader'+Game.time,{memory:{role:"upgrader"}});
-        }
-        else if(gatherers<Game.spawns['Spawn1'].memory.numberOfGatherers)
-        {
-            Game.spawns["Spawn1"].spawnCreep(Body,'Gatherer'+Game.time,{memory:{role:"gatherer"}});
-        }
         else if(miners<Game.spawns['Spawn1'].memory.numberOfMiners)
         {   
             var attachTo;
@@ -88,6 +78,18 @@ module.exports.loop = function () {
             }
             console.log('sdfsdfasdfasdfa : '+attachTo);
             Game.spawns['Spawn1'].spawnCreep(BodyMiner,'Miner'+Game.time,{memory:{role: 'miner', attachTo: attachTo}});
+        }
+        else if(upgraders<Game.spawns['Spawn1'].memory.numberOfUpgraders)
+        {
+            Game.spawns["Spawn1"].spawnCreep(Body,'Upgrader'+Game.time,{memory:{role:"upgrader"}});
+        }
+        else if(gatherers<Game.spawns['Spawn1'].memory.numberOfGatherers)
+        {
+            Game.spawns["Spawn1"].spawnCreep(Body,'Gatherer'+Game.time,{memory:{role:"gatherer"}});
+        }
+        else if(builders<Game.spawns['Spawn1'].memory.numberOfBuilders)
+        {
+            Game.spawns["Spawn1"].spawnCreep(Body,'Builder'+Game.time,{memory:{role:"builder"}});
         }
     }
 
@@ -125,8 +127,4 @@ module.exports.loop = function () {
             roleMiner.run(creep);
         }
     }
-
-    //to work
-    Game.creeps['Miner49749860'].harvest(Game.getObjectById('5bbca9fe9099fc012e6308a0'));
-    
 }
