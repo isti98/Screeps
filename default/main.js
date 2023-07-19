@@ -13,7 +13,7 @@ module.exports.loop = function () {
     Game.spawns['Spawn1'].memory.numberOfGatherers=0;
     Game.spawns['Spawn1'].memory.numberOfBuilders=1;
     Game.spawns['Spawn1'].memory.numberOfUpgraders=1;
-    Game.spawns['Spawn1'].memory.numberOfMiners=2;
+    Game.spawns['Spawn1'].memory.numberOfMiners=1;
     Game.spawns['Spawn1'].memory.numberOfCarries=2;
     Game.spawns['Spawn1'].memory.mines=['5bbca9fe9099fc012e6308a0','5bbca9fe9099fc012e6308a1'];
     Game.spawns['Spawn1'].memory.ticksLeft=[0,0];
@@ -37,17 +37,18 @@ module.exports.loop = function () {
         var avaiableSource = Game.rooms[Game.spawns['Spawn1'].memory.myRooms[0]].energyCapacityAvailable;
         console.log("AvaibleSources: "+ avaiableSource);
         var BodyMiner=[];
-        var BodyCarry=[CARRY,CARRY,MOVE,MOVE];
-        var Body=[WORK,CARRY,MOVE];
+        var BodyCarry=[CARRY,CARRY,CARRY,CARRY,MOVE,MOVE];
+        var Body=[];
         var numberOfBodyParts = (avaiableSource)/100;
         var i;
         for(i=0; i<numberOfBodyParts-1.5; ++i)
         {
+            Body[i]=WORK;
             BodyMiner[i]=WORK;
         }
-        BodyMiner[i]=MOVE;
-        Body=BodyMiner;
+        Body[i]=MOVE;
         Body[0]=CARRY;
+        BodyMiner[i]=MOVE;
         console.log(BodyMiner);
         var gatherers = (_.filter(Game.creeps, (creep) => creep.memory.role == 'gatherer')).length;
         console.log('Gatherer: ' + gatherers+" < "+Game.spawns["Spawn1"].memory.numberOfGatherers);
@@ -94,7 +95,7 @@ module.exports.loop = function () {
     }
 
 
-    var tower = Game.getObjectById('e60316bfcc3a253f9cb92688');
+    var tower = Game.getObjectById('64b7eaed34d3a0d0371d8efe');
     if(tower) {
         var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
