@@ -1,7 +1,7 @@
+ <img src="https://blog.screeps.com/2018/12/changelog-2018-12-14/logo.gif" alt="Screeps Icon" width="500px" title="Screeps Icon" />
 # Screeps
-  <img src="https://blog.screeps.com/2018/12/changelog-2018-12-14/logo.gif" alt="Screeps Icon" width="200px" title="Screeps Icon" />
 ## Table of Contents
-- [Documentation](#documentation)
-- [SecondSection](#secondsection)
+  -[Documentation](#documentation)
+  -[SecondSection](#secondsection)
 ## Documentation
-The documentation for the project can be found [HERE](docs/Documentation.pdf).
+  The documentation for the project can be found [HERE](d/Calculation.pdf).
