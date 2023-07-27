@@ -1,12 +1,43 @@
-class profitableMine {
+class profitableStationSearch {
     constructor(spawn,CarryBody,MinerBody){
         this.spawn=spawn;
     }
-    function balbal(){
+    sumIncome(){
+
+    }
+    sumCost(){
+
+    }
+    numberOfMiners(){
+
+    }
+    miningEfficancy(){
+
+    }
+    timeSpendOnMoving(){
+
+    }
+    numberOfCarries(){
+
+    }
+    averageCarringCapcity(){
+
+    }
+    timeSpentOnRound(){
 
     }
 
+};
+class BodyCreator{
+    *var miner;
+    *var carry;
+    *var builder;
+    *var upgrader;
+    *var warrior;
 
+    *var avaibleResource;
+
+    //Functions
 
 };
 
